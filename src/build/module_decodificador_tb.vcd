@@ -1,0 +1,39 @@
+$date
+	Tue Mar 25 23:26:53 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module module_decodificador_tb $end
+$var wire 4 ! salida [3:0] $end
+$var reg 7 " recibido [6:0] $end
+$scope module dut $end
+$var wire 7 # datos_cod [6:0] $end
+$var wire 4 $ datos_out [3:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 $
+b0 #
+b0 "
+b0 !
+$end
+#10
+b1 !
+b1 $
+b111 "
+b111 #
+#20
+b10 !
+b10 $
+b11001 "
+b11001 #
+#30

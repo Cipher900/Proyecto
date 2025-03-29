@@ -1,8 +1,8 @@
-module corrector_error(
-    input  logic [2:0] sindrome;         // Entrada de 3 bits [p2,p1,p0]. Síndrome de error.
-    input  logic [6:0] datos_recibidos;  // Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0].
-    output logic [6:0] data;             // Salida de 7 bits [i3,i2,i1,c2,i0,c1,c0].  
-)
+module module_corrector_error(
+    input  logic [2:0] sindrome,         // Entrada de 3 bits [p2,p1,p0]. Síndrome de error.
+    input  logic [6:0] datos_recibidos,  // Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0].
+    output logic [6:0] data             // Salida de 7 bits [i3,i2,i1,c2,i0,c1,c0].  
+);
 // Decodificador 3 a 8 de 8bits.
 logic  [7:0]    d0, d1, d2, d3, d4, d5, d6, d7;                  // Valores para guardar posicion de bit erroneo.
 logic  [7:0]    data8;                                           // Valor para guardar data con un bit demas.

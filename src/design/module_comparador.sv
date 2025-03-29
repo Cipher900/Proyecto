@@ -1,6 +1,4 @@
 module comparador(
-    logic [6:0] data_paridad, 
-    logic [6:0] comparacion,
-
-)
+   input logic [6:0] data_paridad, 
+   output logic [6:0] comparacion);
 endmodule

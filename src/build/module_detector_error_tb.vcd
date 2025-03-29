@@ -1,0 +1,50 @@
+$date
+	Sat Mar 29 14:37:44 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module module_detector_error_tb $end
+$var wire 3 ! sin [2:0] $end
+$var wire 1 " error $end
+$var reg 7 # datos_rec [6:0] $end
+$scope module dut $end
+$var wire 1 " bit_error $end
+$var wire 7 $ datos_recibidos [6:0] $end
+$var wire 3 % sindrome [2:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b111 %
+b1000000 $
+b1000000 #
+1"
+b111 !
+$end
+#10
+0"
+b0 !
+b0 %
+b111 #
+b111 $
+#20
+1"
+b11 !
+b11 %
+b11101 #
+b11101 $
+#30
+0"
+b0 !
+b0 %
+b1111111 #
+b1111111 $
+#40
