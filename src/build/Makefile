@@ -15,18 +15,18 @@ SOURCES := $(wildcard ../design/*.v ../design/*.sv) #Todas las fuentes .v o .sv 
 
 #Fuente de simulacion
 #aca va el testbench que quieran simular
-TESTBENCH = ../sim/module_detector_error_tb.sv
+TESTBENCH = ../sim/module_corrector_error_tb.sv
 
 # Constraints para el proyecto
 # aca va el archivo de constraints del proyecto
 CONSTRAINTS = ../constr/module_test.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
-TOP_DESIGN = module_detector_error
-TOP_TB     = module_detector_error_tb
+TOP_DESIGN = module_corrector_error
+TOP_TB     = module_corrector_error_tb
 
 #nombre del vcd que va a generar el tb
-VCD_FILE = module_detector_error_tb.vcd
+VCD_FILE = module_corrector_error_tb.vcd
 
 all: synth pnr bitstream load
 
