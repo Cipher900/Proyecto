@@ -1,5 +1,5 @@
 $date
-	Sat Mar 29 20:51:47 2025
+	Tue Apr 01 21:07:19 2025
 $end
 $version
 	Icarus Verilog
@@ -8,22 +8,14 @@ $timescale
 	1ns
 $end
 $scope module module_corrector_error_tb $end
-$var wire 7 ! datos_co [6:0] $end
-$var reg 7 " datos_rec [6:0] $end
-$var reg 3 # sin [2:0] $end
+$var wire 7 ! data [6:0] $end
+$var reg 7 " datos_recibidos [6:0] $end
+$var reg 3 # sindrome [2:0] $end
 $scope module dut $end
-$var wire 8 $ data8 [7:0] $end
+$var wire 7 $ data [6:0] $end
 $var wire 7 % datos_recibidos [6:0] $end
 $var wire 3 & sindrome [2:0] $end
-$var wire 7 ' data [6:0] $end
-$var wire 8 ( d7 [7:0] $end
-$var wire 8 ) d6 [7:0] $end
-$var wire 8 * d5 [7:0] $end
-$var wire 8 + d4 [7:0] $end
-$var wire 8 , d3 [7:0] $end
-$var wire 8 - d2 [7:0] $end
-$var wire 8 . d1 [7:0] $end
-$var wire 8 / d0 [7:0] $end
+$var wire 8 ' data8 [7:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -32,35 +24,44 @@ $dumpall
 $end
 #0
 $dumpvars
-bz1 /
-bz0z .
-bz0zz -
-bz0zzz ,
-bz0zzzz +
-bz0zzzzz *
-bz0zzzzzz )
-b0zzzzzzz (
-bx '
+b10000000 '
 b0 &
-b111 %
-bx $
+b1010101 %
+b10101 $
 b0 #
-b111 "
-bx !
+b1010101 "
+b10101 !
 $end
 #10
-bz0 /
-bz1zzzz +
+b1110101 !
+b1110101 $
+b1000 '
+b1110001 "
+b1110001 %
 b1 #
 b1 &
-b110 "
-b110 %
 #20
-bz0zzzz +
-b1zzzzzzz (
-bz0zzzzz *
+b1111010 !
+b1111010 $
+b100000 '
+b1101010 "
+b1101010 %
+b10 #
+b10 &
+#30
+b1001000 !
+b1001000 $
+b10 '
+b1001001 "
+b1001001 %
+b11 #
+b11 &
+#40
+b111110 !
+b111110 $
+b1 '
+b111110 "
+b111110 %
 b111 #
 b111 &
-b1111111 "
-b1111111 %
-#30
+#50
