@@ -19,7 +19,7 @@ TESTBENCH = ../sim/module_top_tb.sv
 
 # Constraints para el proyecto
 # aca va el archivo de constraints del proyecto
-CONSTRAINTS = ../constr/module_test.cst
+CONSTRAINTS = ../constr/module_constraints.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
 TOP_DESIGN = module_top

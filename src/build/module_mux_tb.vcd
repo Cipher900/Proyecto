@@ -1,0 +1,59 @@
+$date
+	Thu Apr 03 12:46:08 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module module_mux_tb $end
+$var wire 7 ! salida_mux_tb [6:0] $end
+$var reg 7 " error_tb [6:0] $end
+$var reg 7 # siete_seg_tb [6:0] $end
+$var reg 1 $ swi_tb $end
+$scope module dut $end
+$var wire 7 % error [6:0] $end
+$var wire 7 & siete_seg [6:0] $end
+$var wire 1 $ swi $end
+$var wire 7 ' salida_mux [6:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 '
+b0 &
+b1111111 %
+0$
+b0 #
+b1111111 "
+b0 !
+$end
+#50
+b1010101 !
+b1010101 '
+b1100110 "
+b1100110 %
+b1010101 #
+b1010101 &
+#100
+b1100110 !
+b1100110 '
+1$
+#150
+b1111111 !
+b1111111 '
+0$
+b0 "
+b0 %
+b1111111 #
+b1111111 &
+#200
+b0 !
+b0 '
+1$
+#300
