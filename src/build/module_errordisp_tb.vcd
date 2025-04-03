@@ -1,0 +1,36 @@
+$date
+	Thu Apr 03 07:25:18 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module module_errordisp_tb $end
+$var wire 7 ! disp_error_tb [6:0] $end
+$var reg 1 " bit_error_tb $end
+$scope module dut $end
+$var wire 1 " bit_error $end
+$var wire 7 # disp_error [6:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx #
+x"
+bx !
+$end
+#50
+b110000 !
+b110000 #
+1"
+#100
+b1111110 !
+b1111110 #
+0"
+#200
