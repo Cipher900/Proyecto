@@ -1,5 +1,5 @@
 $date
-	Thu Apr 03 13:00:16 2025
+	Thu Apr 03 16:31:16 2025
 $end
 $version
 	Icarus Verilog
@@ -18,7 +18,7 @@ $var wire 4 & entrada [3:0] $end
 $var wire 7 ' palabra [6:0] $end
 $var wire 3 ( sindrome_d [2:0] $end
 $var wire 3 ) sindrome_c [2:0] $end
-$var wire 4 * siete_seg_deco [3:0] $end
+$var wire 4 * siete_seg_cod [3:0] $end
 $var wire 7 + siete_seg [6:0] $end
 $var wire 7 , palabra_out [6:0] $end
 $var wire 4 - led_o [3:0] $end
@@ -60,15 +60,15 @@ $var wire 1 3 bit_error $end
 $var wire 7 B datos_recibidos [6:0] $end
 $var wire 3 C sindrome [2:0] $end
 $upscope $end
-$scope module display $end
+$scope module display_cod $end
 $var wire 4 D data [3:0] $end
 $var wire 7 E display [6:0] $end
 $upscope $end
 $scope module error_display $end
-$var wire 1 3 bit_error $end
+$var wire 1 2 bit_error $end
 $var wire 7 F disp_error [6:0] $end
 $upscope $end
-$scope module led_out $end
+$scope module leds $end
 $var wire 4 G in [3:0] $end
 $var wire 4 H out [3:0] $end
 $upscope $end
@@ -122,22 +122,25 @@ b1111 "
 b1111110 !
 $end
 #50
+b1111110 #
+b1111110 /
+b1111110 F
 02
-b1110 "
-b1110 -
-b1110 H
 b0 )
 b0 7
 b0 A
+b1110 "
+b1110 -
+b1110 H
 b110000 !
 b110000 +
 b110000 E
-b1 .
-b1 ?
-b1 G
 b1 *
-b1 =
+b1 ?
 b1 D
+b1 .
+b1 =
+b1 G
 b111 ,
 b111 8
 b111 >
@@ -156,29 +159,29 @@ b1 $
 b1 &
 b1 4
 #100
-b110000 #
-b110000 /
-b110000 F
+b1111110 #
+b1111110 /
+b1111110 F
 02
 13
-b1101 "
-b1101 -
-b1101 H
 b1101101 !
 b1101101 +
 b1101101 E
+b1101 "
+b1101 -
+b1101 H
 b0 )
 b0 7
 b0 A
 b100 (
 b100 :
 b100 C
-b10 .
-b10 ?
-b10 G
 b10 *
-b10 =
+b10 ?
 b10 D
+b10 .
+b10 =
+b10 G
 b11001 ,
 b11001 8
 b11001 >
@@ -197,32 +200,32 @@ b10 $
 b10 &
 b10 4
 #150
-b1111001 !
-b1111001 +
-b1111001 E
 b1111110 #
 b1111110 /
 b1111110 F
-02
-03
-b11 *
-b11 =
-b11 D
-b11110 0
-b11110 ;
-b11110 <
 b1100 "
 b1100 -
 b1100 H
+02
+03
+b11 .
+b11 =
+b11 G
+b1111001 !
+b1111001 +
+b1111001 E
+b11110 0
+b11110 ;
+b11110 <
 b0 )
 b0 7
 b0 A
 b0 (
 b0 :
 b0 C
-b11 .
+b11 *
 b11 ?
-b11 G
+b11 D
 b11110 ,
 b11110 8
 b11110 >
@@ -255,12 +258,12 @@ b0 A
 b0 (
 b0 :
 b0 C
-b100 .
-b100 ?
-b100 G
 b100 *
-b100 =
+b100 ?
 b100 D
+b100 .
+b100 =
+b100 G
 b101010 ,
 b101010 8
 b101010 >
@@ -279,29 +282,29 @@ b100 $
 b100 &
 b100 4
 #250
-b110000 #
-b110000 /
-b110000 F
+b1111110 #
+b1111110 /
+b1111110 F
 02
-13
 b1011011 !
 b1011011 +
 b1011011 E
-b1010 "
-b1010 -
-b1010 H
+13
 b0 )
 b0 7
 b0 A
+b1010 "
+b1010 -
+b1010 H
 b1 (
 b1 :
 b1 C
-b101 .
-b101 ?
-b101 G
 b101 *
-b101 =
+b101 ?
 b101 D
+b101 .
+b101 =
+b101 G
 b101101 ,
 b101101 8
 b101101 >
@@ -320,25 +323,28 @@ b101 $
 b101 &
 b101 4
 #300
+b1111110 #
+b1111110 /
+b1111110 F
+b1011111 !
+b1011111 +
+b1011111 E
 02
-b1111111 !
-b1111111 +
-b1111111 E
-b1001 "
-b1001 -
-b1001 H
-b1000 *
+b111 "
+b111 -
+b111 H
+b1000 .
 b1000 =
-b1000 D
+b1000 G
 b0 )
 b0 7
 b0 A
 b1001011 0
 b1001011 ;
 b1001011 <
-b110 .
+b110 *
 b110 ?
-b110 G
+b110 D
 b101 (
 b101 :
 b101 C
@@ -357,29 +363,29 @@ b110 $
 b110 &
 b110 4
 #350
-b1110000 !
-b1110000 +
-b1110000 E
 b1111110 #
 b1111110 /
 b1111110 F
-02
-03
-b111 *
-b111 =
-b111 D
-b110100 0
-b110100 ;
-b110100 <
 b1000 "
 b1000 -
 b1000 H
+02
+b1110000 !
+b1110000 +
+b1110000 E
+03
+b111 .
+b111 =
+b111 G
+b110100 0
+b110100 ;
+b110100 <
 b0 )
 b0 7
 b0 A
-b111 .
+b111 *
 b111 ?
-b111 G
+b111 D
 b0 (
 b0 :
 b0 C
@@ -398,29 +404,29 @@ b111 $
 b111 &
 b111 4
 #400
-b110000 #
-b110000 /
-b110000 F
-13
-b111 "
-b111 -
-b111 H
-02
+b1111110 #
+b1111110 /
+b1111110 F
 b1111111 !
 b1111111 +
 b1111111 E
+13
+02
+b111 "
+b111 -
+b111 H
 b111 (
 b111 :
 b111 C
-b1000 .
+b1000 *
 b1000 ?
-b1000 G
+b1000 D
 b0 )
 b0 7
 b0 A
-b1000 *
+b1000 .
 b1000 =
-b1000 D
+b1000 G
 b1001011 ,
 b1001011 8
 b1001011 >
@@ -439,29 +445,29 @@ b1000 $
 b1000 &
 b1000 4
 #450
-bx !
-bx +
-bx E
 b1111110 #
 b1111110 /
 b1111110 F
+b0 "
+b0 -
+b0 H
 02
+b1110011 !
+b1110011 +
+b1110011 E
 03
-b1111 *
+b1111 .
 b1111 =
-b1111 D
+b1111 G
 b1111111 0
 b1111111 ;
 b1111111 <
-b110 "
-b110 -
-b110 H
 b0 )
 b0 7
 b0 A
-b1001 .
+b1001 *
 b1001 ?
-b1001 G
+b1001 D
 b0 (
 b0 :
 b0 C
