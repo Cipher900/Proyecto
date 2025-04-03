@@ -8,9 +8,4 @@ module module_led(
     assign out[1] = ~in[1]; // LED 1
     assign out[2] = ~in[2]; // LED 2
     assign out[3] = ~in[3]; // LED 3
-
-    // Se puede agregar lógica adicional aquí si es necesario
-    // para controlar el comportamiento de los LEDs.
-    // Por ejemplo, invertir la señal de un LED:
-    // assign out[0] = ~in[0]; // Invertir LED 0
 endmodule

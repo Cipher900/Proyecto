@@ -1,5 +1,5 @@
 $date
-	Tue Apr 01 23:30:41 2025
+	Thu Apr 03 01:01:46 2025
 $end
 $version
 	Icarus Verilog
@@ -12,10 +12,9 @@ $var wire 7 ! data [6:0] $end
 $var reg 7 " datos_recibidos [6:0] $end
 $var reg 3 # sindrome [2:0] $end
 $scope module dut $end
-$var wire 7 $ data [6:0] $end
-$var wire 7 % datos_recibidos [6:0] $end
-$var wire 3 & sindrome [2:0] $end
-$var wire 8 ' data8 [7:0] $end
+$var wire 7 $ datos_recibidos [6:0] $end
+$var wire 3 % sindrome [2:0] $end
+$var wire 7 & data [6:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -24,44 +23,39 @@ $dumpall
 $end
 #0
 $dumpvars
-b10000000 '
-b0 &
-b1010101 %
-b10101 $
+b1010101 &
+b0 %
+b1010101 $
 b0 #
 b1010101 "
-b10101 !
+b1010101 !
 $end
 #10
-b1110101 !
-b1110101 $
-b1000 '
+b1110000 !
+b1110000 &
 b1110001 "
-b1110001 %
+b1110001 $
 b1 #
-b1 &
+b1 %
 #20
-b1111010 !
-b1111010 $
-b100000 '
+b1101000 !
+b1101000 &
 b1101010 "
-b1101010 %
+b1101010 $
 b10 #
-b10 &
+b10 %
 #30
-b1001000 !
-b1001000 $
-b10 '
+b1001101 !
+b1001101 &
 b1001001 "
-b1001001 %
+b1001001 $
 b11 #
-b11 &
+b11 %
 #40
-b111110 !
-b111110 $
-b1 '
+b1111110 !
+b1111110 &
 b111110 "
-b111110 %
+b111110 $
 b111 #
-b111 &
+b111 %
 #50
