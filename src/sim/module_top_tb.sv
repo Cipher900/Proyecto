@@ -26,7 +26,7 @@ initial begin
     // Aplicar estímulos al módulo DUT
     #50 entrada_tb = 4'b0001; palabra_tb = 7'b0000111; // Test case 1
     #50 entrada_tb = 4'b0010; palabra_tb = 7'b0010001; // Test case 2
-    #50 entrada_tb = 4'b0011; palabra_tb = 7'b0011110; // Test case 3
+    #50 entrada_tb = 4'b0011; palabra_tb = 7'b0010110; // Test case 3
     #50 entrada_tb = 4'b0100; palabra_tb = 7'b0101010; // Test case 4
     #50 entrada_tb = 4'b0101; palabra_tb = 7'b0101100; // Test case 5
     #50 entrada_tb = 4'b0110; palabra_tb = 7'b1011011; // Test case 6

@@ -20,15 +20,15 @@ logic [3:0] led_cod;
 logic [3:0] siete_seg_cod;
 
 // Instancia de los módulos
-module_codificador codificador (entrada,codificador_out);
+module_codificador codificador (entrada,codificador_out); // codificador(.sat)
 module_detector_error detector_cod(codificador_out,sindrome_c,bit_error_d);
 module_corrector_error corrector_cod(sindrome_c,codificador_out,palabra_out);
 module_decodificador deco_led(palabra_out,siete_seg_cod);
-module_errordisp error_display(bit_error_d,error);
 module_7segmentos display_cod(siete_seg_cod,siete_seg);
 module_detector_error detector_deco(palabra,sindrome_d,bit_error_c);
 module_corrector_error corrector_deco(sindrome_d,palabra,decodificador_in);
 module_decodificador deco_display(decodificador_in,led_cod);
 module_led leds(led_cod,led_o);
+module_errordisp error_display(bit_error_c,error);
 
 endmodule

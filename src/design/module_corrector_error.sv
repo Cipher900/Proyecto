@@ -28,5 +28,4 @@ assign data = (sindrome == 3'b000) ? datos_recibidos : //No hay error
               (sindrome == 3'b110) ? {~datos_recibidos[6], datos_recibidos[5:0]} : //Error en bit 5
               (sindrome == 3'b111) ? {~datos_recibidos[6],datos_recibidos[5:0]} : //Error en bit 6
               7'bxxxxxxxx;
-
 endmodule

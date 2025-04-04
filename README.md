@@ -1,4 +1,8 @@
 # Nombre del proyecto
+Tarea 1: Introducción al diseño digital en HDL 
+
+#### Integrantes del proyecto
+Felipe Sánchez Segura y Gabriel Ovares Morgan
 
 ## 1. Abreviaturas y definiciones
 - **FPGA**: Field Programmable Gate Arrays
@@ -36,6 +40,26 @@ Descripción y resultados de las pruebas hechas
 
 
 ## 4. Consumo de recursos
+=== module_top ===
+
+   Number of wires:                 64
+   Number of wire bits:            196
+   Number of public wires:          64
+   Number of public wire bits:     196
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 76
+     GND                             1
+     IBUF                           11
+     LUT1                            1
+     LUT4                           27
+     MUX2_LUT5                      10
+     MUX2_LUT6                       5
+     MUX2_LUT7                       2
+     OBUF                           18
+     VCC                             1
+
 
 ## 5. Problemas encontrados durante el proyecto
 
