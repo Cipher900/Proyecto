@@ -61,8 +61,10 @@ endmodule
 #### 1.2 Entradas y salidas:
 - `entrada_i`: descripción de la entrada
 - `salida_o`: descripción de la salida
+
 #### 1.4 Testbench
 Descripción y resultados de las pruebas hechas
+
 Testbench top
 ```SystemVerilog
 `timescale 1ns/1ns
@@ -114,9 +116,9 @@ Con este módulo se encontaron los valores:
 
 ![image](https://github.com/user-attachments/assets/dbb19976-bf16-4b90-8698-a297b0e850fb)
 
-
-### 1.5 Otros modulos
+*** 1.5 Otros Modulos ****
 - agregar informacion siguiendo el ejemplo anterior.
+
 ##### Módulo Mux
 ```SystemVerilog
 module module_mux(
