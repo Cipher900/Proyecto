@@ -275,12 +275,23 @@ endmodule
      OBUF                           18
      VCC                             1
 ```
-## 3. Problemas encontrados durante el proyecto
+### 3. Diagrama
+
+![Untitled](https://github.com/user-attachments/assets/64c054a8-fb5a-4369-9c45-5a5a5657fc85)
+
+
+![Untitled2](https://github.com/user-attachments/assets/f4051765-58e8-4394-94ba-8df0338edac8)
+
+
+![Untitled3](https://github.com/user-attachments/assets/fee4ddb9-09e9-4912-9b5e-44ff30870c67)
+
+
+## 4. Problemas encontrados durante el proyecto
 Los problemas encontrados con el proyecto fueron:
 - `Pasar de la simulación a la fpga y el circuito fisíco.`
 - `El código del corrector error fue retador.`
 - `El código del 7 segmentos.`
-## 4. Abreviaturas y definiciones
+## 5. Abreviaturas y definiciones
 **FPGA:** Field Programmable Gate Arrays
 **HDL:** Hardware Description Language
 **LED:** Light Emitting Diode
