@@ -17,6 +17,12 @@ Para su desarrollo, el sistema ha sido estructurado en distintos **subsistemas f
 2. **Subsistema de visualización**: Encargado del despliegue de la información procesada en los distintos elementos de salida (display de siete segmentos y LEDs).
 
 A continuación se presenta un diagrama de la conexión de los subsistemas:
+
+![general](https://github.com/user-attachments/assets/fee4ddb9-09e9-4912-9b5e-44ff30870c67)
+
+Ya en el desarrollo de el sistema, los módulos se tratan como bloques de lógica combinacional, los cuales siguen la siguiente interconexión entre ellos:
+
+![diagrama_flujo](https://github.com/user-attachments/assets/f4051765-58e8-4394-94ba-8df0338edac8)
 ### 1.1 Módulos
 A continuación, se presenta la descripción de los principales módulos que componen el sistema desarrollado.
 ##### Módulo Top
@@ -58,14 +64,209 @@ module_errordisp error_display(bit_error_c,error);
 
 endmodule
 ```
+
+##### Módulo Mux
+Este módulo es el que selecciona si desplegar el error o la palabra transmitida en el siete segmentos.
+
+```SystemVerilog
+module module_mux(
+    input logic [6:0] siete_seg,
+    input logic [6:0] error,
+    input logic swi,
+    output logic [6:0] salida_mux
+);
+
+assign salida_mux = swi ? error : siete_seg; // Selección entre los dos inputs según el valor de swi
+    
+endmodule
+```
+##### Módulo Corrector de error
+La funcionalidad de este módulo es el de corregir el error contenido en la palabra transmitida de acuerdo al síndrome recibido del detector de error. 
+
+```SystemVerilog
+module module_corrector_error(
+    input  logic[2:0] sindrome,        // Entrada de 3 bits [p2,p1,p0]. Síndrome de error.
+    input  logic[6:0] datos_recibidos,  // Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0].
+    output logic[6:0] data             // Salida de 7 bits [i3,i2,i1,c2,i0,c1,c0].  
+);
+
+assign data = (sindrome == 3'b000) ? datos_recibidos : //No hay error 
+              (sindrome == 3'b001) ? {datos_recibidos[6:1], ~datos_recibidos[0]} : //Error en bit 0
+              (sindrome == 3'b010) ? {datos_recibidos[6:2], ~datos_recibidos[1], datos_recibidos[0]} : //Error en bit 1
+              (sindrome == 3'b011) ? {datos_recibidos[6:3], ~datos_recibidos[2], datos_recibidos[1:0]} : //Error en bit 2
+              (sindrome == 3'b100) ? {datos_recibidos[6:4], ~datos_recibidos[3], datos_recibidos[2:0]} : //Error en bit 3
+              (sindrome == 3'b101) ? {datos_recibidos[6:5], ~datos_recibidos[4], datos_recibidos[3:0]} : //Error en bit 4
+              (sindrome == 3'b110) ? {~datos_recibidos[6], datos_recibidos[5:0]} : //Error en bit 5
+              (sindrome == 3'b111) ? {~datos_recibidos[6],datos_recibidos[5:0]} : //Error en bit 6
+              7'bxxxxxxxx;
+endmodule
+```
+##### Módulo Codificador
+Este módulo es el encargado de codificar la palabra de referencia. Se agregan bits de paridad para preparar la palabra que será transmitida.
+
+``` 
+ Entrada | Codificado (7 bits)
+  -------|-------------------
+   0000  |   0000000
+   0001  |   0000111
+   0010  |   0011001
+   0011  |   0011110
+   0100  |   0101010
+   0101  |   0101101
+   0110  |   0110011
+   0111  |   0110100
+   1000  |   1001011
+   1001  |   1001100
+   1010  |   1010010
+   1011  |   1010101
+   1100  |   1100001
+   1101  |   1100110
+   1110  |   1111000
+   1111  |   1111111
+
+```
+
+```SystemVerilog
+module module_codificador (input logic [3:0] datos_in, //Entrada de 4 bits [3,2,1,0]
+                           output logic [6:0] datos_cod); //Salida de 7 bits [7,6,5,4,3,2,1,0]
+
+assign datos_cod[2] = datos_in[0]; // i0
+assign datos_cod[4] = datos_in[1]; // i1
+assign datos_cod[5] = datos_in[2]; // i2
+assign datos_cod[6] = datos_in[3]; // i3
+
+// bits de paridad
+assign datos_cod[0] = datos_in[0]^datos_in[1]^datos_in[3]; // c0 cubre la paridad de los bits 1,2,4 
+assign datos_cod[1] = datos_in[0]^datos_in[2]^datos_in[3]; // c1 cubre la paridad de los bits 1,3,4
+assign datos_cod[3] = datos_in[1]^datos_in[2]^datos_in[3]; // c2 cubre la paridad de los bits 2,3,4
+// Se trabaja con la función XOR para calcular los bits de paridad.
+endmodule
+```
+##### Módulo Decodificador
+Este módulo se encarga de decodificar las palabras recibidas. Simplemente selecciona las posiciones de los bits de información.
+
+```SystemVerilog
+module module_decodificador ( // Modulo decodificador de una palabra de 7 bits. Segunda parte del código de hamming 3
+    input logic [6:0] datos_cod,     //Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0]
+    output logic [3:0] datos_out      //Salida de 4 bits [i3,i2,i1,i0]
+); 
+
+assign datos_out[0] = datos_cod[2]; // i0
+assign datos_out[1] = datos_cod[4]; // i1
+assign datos_out[2] = datos_cod[5]; // i2
+assign datos_out[3] = datos_cod[6]; // i3
+
+endmodule
+```
+##### Módulo 7 Segmentos
+El siguiente módulo codifica las palabras recibidas de acuerdo con su valor. Está basado en la siguiente tabla de verdad:
+
+``` 
+# Tabla de Verdad
+          Entrada               Salida
+| Díg | D   C   B   A | a   b   c   d   e   f   g |
+|-----|---|---|---|---|---|---|---|---|---|---|---|
+|  0  | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
+|  1  | 0 | 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
+|  2  | 0 | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 |
+|  3  | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 |
+|  4  | 0 | 1 | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 |
+|  5  | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 0 | 0 | 1 | 1 |
+|  6  | 0 | 1 | 1 | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 1 |
+|  7  | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+|  8  | 1 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+|  9  | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 1 |
+|10-15| X | X | X | X | X | X | X | X | X | X | X |
+```
+
+Esta tabla representa la codificación de los números del 0 al 9 en binario (D, C, B, A) y su respectiva salida en un display de 7 segmentos (a, b, c, d, e, f, g). Los valores de 10 a 15 no están definidos y se representan con 'X'.
+
+```SystemVerilog
+module module_7segmentos(
+    input  logic[3:0] data,            // Entrada de 4 bits [d3,d2,d1,d0]. 
+    output logic[6:0] display          // Salida de 7 bits [a,b,c,d,e,f,g]. 
+);
+// Decodificador 4 a 7 de 7bits.        abc defg  // Valores para guardar el valor de cada segmento.
+assign display = (data == 4'b0000) ? 7'b111_1110:
+                 (data == 4'b0001) ? 7'b011_0000:
+                 (data == 4'b0010) ? 7'b110_1101:
+                 (data == 4'b0011) ? 7'b111_1001:
+                 (data == 4'b0100) ? 7'b011_0011:
+                 (data == 4'b0101) ? 7'b101_1011:
+                 (data == 4'b0110) ? 7'b101_1111:
+                 (data == 4'b0111) ? 7'b111_0000:
+                 (data == 4'b1000) ? 7'b111_1111:
+                 (data == 4'b1001) ? 7'b111_0011:
+                 7'bxxx_xxxx; // Default case, all segments off
+endmodule
+```
+##### Módulo Detector de Error
+Este módulo detecta los errores realizando pruebas de paridad en la palabra recibida. Su salida es el síndrome de la palabra recibida y el bit de error.
+
+``` SystemVerilog
+module module_detector_error(// Modulo detector de error de una palabra de 7 bits.
+    input  logic [6:0] datos_recibidos,  //Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0]
+    output logic [2:0] sindrome,         // Salida de 3 bits [p2,p1,p0]. Síndrome de error 
+    output logic       bit_error        // Salida del bit del error.
+);
+// Calculo del síndrome del error en la palabra recibida.
+assign sindrome[0] = datos_recibidos[0]^datos_recibidos[2]^datos_recibidos[4]^datos_recibidos[6]; // p0 = c0^i0^i1^i3
+assign sindrome[1] = datos_recibidos[1]^datos_recibidos[2]^datos_recibidos[5]^datos_recibidos[6]; // p1 = c1^i0^i2^i3
+assign sindrome[2] = datos_recibidos[3]^datos_recibidos[4]^datos_recibidos[5]^datos_recibidos[6]; // p2 = c2^i1^i2^i3
+// Se trabaja con la función XOR para calcular los bits de paridad.
+
+assign bit_error = sindrome[0] | sindrome[1] | sindrome[2]; 
+// Se trabaja con la funcion OR para encontrar el bit erroneo.
+endmodule
+```
+##### Módulo Error Display
+Este módulo despliega si hay error o no en el display de siete segmentos dependiendo del bit de error recibido. Sigue la misma lógica de la tabla de verdad del módulo decodificador del siete segmentos.
+
+```SystemVerilog
+module module_errordisp(
+    input logic bit_error,
+    output logic[6:0] disp_error
+);
+    // Asignación del error al display de 7 segmentos
+    assign disp_error = (bit_error == 1'b1) ? 7'b011_0000 :
+                        (bit_error == 1'b0) ? 7'b111_1110 :
+                        7'bxxx_xxxx;
+endmodule
+```
+##### Módulo LED
+Este módulo es el encargado de recibir la palabra transmitida y desplegarla en los LEDs de la FPGA.
+
+```SystemVerilog
+module module_led(
+    input logic [3:0] in,
+    output logic [3:0] out
+);
+
+    // Asignación de los LEDs a los bits de entrada
+    assign out[0] = ~in[0]; // LED 0
+    assign out[1] = ~in[1]; // LED 1
+    assign out[2] = ~in[2]; // LED 2
+    assign out[3] = ~in[3]; // LED 3
+endmodule
+```
 #### 1.2 Entradas y salidas:
-- `entrada_i`: descripción de la entrada
-- `salida_o`: descripción de la salida
 
+El siguiente diagrama presenta un resumen de las entradas y salidas del sistema:
+
+![module_top](https://github.com/user-attachments/assets/64c054a8-fb5a-4369-9c45-5a5a5657fc85)
+
+En donde las entradas y salidas son descritas como:
+##### Entradas
+- `entrada`: Es la palabra de referencia de 4 bits.
+- `palabra`: Es la palabra a transmitir de 7 bits.
+##### Salidas
+- `siete_seg`:  Palabra que sale del display del siete segmentos.
+- `error`: Es un bit que representa si hay error o no.
+- `led_o`: Es la palabra que llega a los LEDs de la FPGA.
 #### 1.4 Testbench
-Descripción y resultados de las pruebas hechas
+##### Testbench top
+Aquí se ejecutan posibles casos que se puedan presentar en la prueba del sistema. Se ingresan datos de entrada y se verifican sus salidas.
 
-Testbench top
 ```SystemVerilog
 `timescale 1ns/1ns
 
@@ -113,149 +314,14 @@ end
 
 endmodule
 ```
-Con este módulo se encontaron los valores: 
 
-![image](https://github.com/user-attachments/assets/dbb19976-bf16-4b90-8698-a297b0e850fb)
+Con este módulo se presentan los siguientes resultados: 
 
-#### 1.5 Otros Modulos 
-- agregar informacion siguiendo el ejemplo anterior.
+![tb_top](https://github.com/user-attachments/assets/dbb19976-bf16-4b90-8698-a297b0e850fb)
 
-##### Módulo Mux
-```SystemVerilog
-module module_mux(
-    input logic [6:0] siete_seg,
-    input logic [6:0] error,
-    input logic swi,
-    output logic [6:0] salida_mux
-);
-
-assign salida_mux = swi ? error : siete_seg; // Selección entre los dos inputs según el valor de swi
-    
-endmodule
-```
-##### Módulo Corrector de error
-
-```SystemVerilog
-module module_corrector_error(
-    input  logic[2:0] sindrome,        // Entrada de 3 bits [p2,p1,p0]. Síndrome de error.
-    input  logic[6:0] datos_recibidos,  // Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0].
-    output logic[6:0] data             // Salida de 7 bits [i3,i2,i1,c2,i0,c1,c0].  
-);
-
-assign data = (sindrome == 3'b000) ? datos_recibidos : //No hay error 
-              (sindrome == 3'b001) ? {datos_recibidos[6:1], ~datos_recibidos[0]} : //Error en bit 0
-              (sindrome == 3'b010) ? {datos_recibidos[6:2], ~datos_recibidos[1], datos_recibidos[0]} : //Error en bit 1
-              (sindrome == 3'b011) ? {datos_recibidos[6:3], ~datos_recibidos[2], datos_recibidos[1:0]} : //Error en bit 2
-              (sindrome == 3'b100) ? {datos_recibidos[6:4], ~datos_recibidos[3], datos_recibidos[2:0]} : //Error en bit 3
-              (sindrome == 3'b101) ? {datos_recibidos[6:5], ~datos_recibidos[4], datos_recibidos[3:0]} : //Error en bit 4
-              (sindrome == 3'b110) ? {~datos_recibidos[6], datos_recibidos[5:0]} : //Error en bit 5
-              (sindrome == 3'b111) ? {~datos_recibidos[6],datos_recibidos[5:0]} : //Error en bit 6
-              7'bxxxxxxxx;
-endmodule
-```
-##### Módulo Codificador
-
-```SystemVerilog
-module module_codificador (input logic [3:0] datos_in, //Entrada de 4 bits [3,2,1,0]
-                           output logic [6:0] datos_cod); //Salida de 7 bits [7,6,5,4,3,2,1,0]
-
-assign datos_cod[2] = datos_in[0]; // i0
-assign datos_cod[4] = datos_in[1]; // i1
-assign datos_cod[5] = datos_in[2]; // i2
-assign datos_cod[6] = datos_in[3]; // i3
-
-// bits de paridad
-assign datos_cod[0] = datos_in[0]^datos_in[1]^datos_in[3]; // c0 cubre la paridad de los bits 1,2,4 
-assign datos_cod[1] = datos_in[0]^datos_in[2]^datos_in[3]; // c1 cubre la paridad de los bits 1,3,4
-assign datos_cod[3] = datos_in[1]^datos_in[2]^datos_in[3]; // c2 cubre la paridad de los bits 2,3,4
-// Se trabaja con la función XOR para calcular los bits de paridad.
-endmodule
-```
-##### Módulo Decodificador
-
-```SystemVerilog
-module module_decodificador ( // Modulo decodificador de una palabra de 7 bits. Segunda parte del código de hamming 3
-    input logic [6:0] datos_cod,     //Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0]
-    output logic [3:0] datos_out      //Salida de 4 bits [i3,i2,i1,i0]
-); 
-
-assign datos_out[0] = datos_cod[2]; // i0
-assign datos_out[1] = datos_cod[4]; // i1
-assign datos_out[2] = datos_cod[5]; // i2
-assign datos_out[3] = datos_cod[6]; // i3
-
-endmodule
-```
-##### Módulo 7 Segmentos
-
-```SystemVerilog
-module module_7segmentos(
-    input  logic[3:0] data,            // Entrada de 4 bits [d3,d2,d1,d0]. 
-    output logic[6:0] display          // Salida de 7 bits [a,b,c,d,e,f,g]. 
-);
-// Decodificador 4 a 7 de 7bits.        gfe dcba      // Valores para guardar el valor de cada segmento.
-assign display = (data == 4'b0000) ? 7'b111_1110:
-                 (data == 4'b0001) ? 7'b011_0000:
-                 (data == 4'b0010) ? 7'b110_1101:
-                 (data == 4'b0011) ? 7'b111_1001:
-                 (data == 4'b0100) ? 7'b011_0011:
-                 (data == 4'b0101) ? 7'b101_1011:
-                 (data == 4'b0110) ? 7'b101_1111:
-                 (data == 4'b0111) ? 7'b111_0000:
-                 (data == 4'b1000) ? 7'b111_1111:
-                 (data == 4'b1001) ? 7'b111_0011:
-                 7'bxxx_xxxx; // Default case, all segments off
-endmodule
-```
-##### Módulo Detector de Error
-
-```SystemVerilog
-module module_detector_error( // Modulo detector de error de una palabra de 7 bits.
-    input  logic [6:0] datos_recibidos,  //Entrada de 7 bits [i3,i2,i1,c2,i0,c1,c0]
-    output logic [2:0] sindrome,         // Salida de 3 bits [p2,p1,p0]. Síndrome de error 
-    output logic       bit_error        // Salida del bit del error.
-);
-// Calculo del síndrome del error en la palabra recibida.
-assign sindrome[0] = datos_recibidos[0]^datos_recibidos[2]^datos_recibidos[4]^datos_recibidos[6]; // p0 = c0^i0^i1^i3
-assign sindrome[1] = datos_recibidos[1]^datos_recibidos[2]^datos_recibidos[5]^datos_recibidos[6]; // p1 = c1^i0^i2^i3
-assign sindrome[2] = datos_recibidos[3]^datos_recibidos[4]^datos_recibidos[5]^datos_recibidos[6]; // p2 = c2^i1^i2^i3
-// Se trabaja con la función XOR para calcular los bits de paridad.
-
-assign bit_error = sindrome[0] | sindrome[1] | sindrome[2]; 
-// Se trabaja con la funcion OR para encontrar el bit erroneo.
-endmodule
-```
-##### Módulo Error Display
-
-```SystemVerilog
-module module_errordisp(
-    input logic bit_error,
-    output logic[6:0] disp_error
-);
-    // Asignación del error al display de 7 segmentos
-    assign disp_error = (bit_error == 1'b1) ? 7'b011_0000 :
-                        (bit_error == 1'b0) ? 7'b111_1110 :
-                        7'bxxx_xxxx;
-endmodule
-```
-##### Módulo LED
-
-```SystemVerilog
-module module_led(
-    input logic [3:0] in,
-    output logic [3:0] out
-);
-
-    // Asignación de los LEDs a los bits de entrada
-    assign out[0] = ~in[0]; // LED 0
-    assign out[1] = ~in[1]; // LED 1
-    assign out[2] = ~in[2]; // LED 2
-    assign out[3] = ~in[3]; // LED 3
-endmodule
-```
 ## 2. Consumo de recursos
 
-``` markdown
+``` 
 === module_top ===
    Number of wires:                 78
    Number of wire bits:            210
@@ -275,23 +341,16 @@ endmodule
      OBUF                           18
      VCC                             1
 ```
-### 3. Diagrama
 
-![Untitled](https://github.com/user-attachments/assets/64c054a8-fb5a-4369-9c45-5a5a5657fc85)
+## 3. Problemas encontrados durante el proyecto
+Durante el desarrollo del proyecto, se identificaron los siguientes desafíos:
 
+1. **Transición de la Simulación a la Implementación Física**: La migración del diseño desde el entorno de simulación hacia la FPGA y el circuito físico presentó dificultades, requiriendo ajustes en la integración y prueba del hardware. Este fue el principal problema que se presentó a la hora de probar el sistema como tal. Debido a diversos contratiempos no se logró solucionar por completo.
+  
+2. **Implementación del Código del Corrector de Errores**: El desarrollo del corrector de errores resultó ser un desafío significativo debido a la poca familiaridad con el entorno de programación y a los diversos acercamientos propuestos que no funcionaban de acuerdo con la lógica del algortimo Hamming. Para este desafío, se optó por utilizar multiplexores en la lógica del código como condicionales, de esta manera cuando el síndrome tuviera cierto valor, se negaría la posición del bit que estuviera indicando.
 
-![Untitled2](https://github.com/user-attachments/assets/f4051765-58e8-4394-94ba-8df0338edac8)
-
-
-![Untitled3](https://github.com/user-attachments/assets/fee4ddb9-09e9-4912-9b5e-44ff30870c67)
-
-
-## 4. Problemas encontrados durante el proyecto
-Los problemas encontrados con el proyecto fueron:
-- `Pasar de la simulación a la fpga y el circuito fisíco.`
-- `El código del corrector error fue retador.`
-- `El código del 7 segmentos.`
-## 5. Abreviaturas y definiciones
+3. **Desarrollo del Código para el Display de 7 Segmentos**: La programación del controlador del display de 7 segmentos presentó dificultades en la configuración de los segmentos y la correcta representación de los valores deseados. Al igual que el problema anterior, se optó por utilizar operadores terniarios como condicionales y cubrir todos los casos indicados por la tabla de verdad del siete segmentos. 
+## 4. Abreviaturas y definiciones
 **FPGA:** Field Programmable Gate Arrays
 **HDL:** Hardware Description Language
 **LED:** Light Emitting Diode
