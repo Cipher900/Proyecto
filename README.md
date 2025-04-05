@@ -277,9 +277,9 @@ endmodule
 ```
 ## 3. Problemas encontrados durante el proyecto
 Los problemas encontrados con el proyecto fueron:
--`Pasar de la simulación a la fpga y el circuito fisíco.` \n
--`El código del corrector error fue retador.` \n
--`El código del 7 segmentos.` \n
+- `Pasar de la simulación a la fpga y el circuito fisíco.`
+- `El código del corrector error fue retador.`
+- `El código del 7 segmentos.`
 ## 4. Abreviaturas y definiciones
 **FPGA:** Field Programmable Gate Arrays
 **HDL:** Hardware Description Language
