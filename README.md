@@ -112,6 +112,7 @@ initial begin
 end
 
 endmodule
+```
 Con este módulo se encontaron los valores: 
 
 ![image](https://github.com/user-attachments/assets/dbb19976-bf16-4b90-8698-a297b0e850fb)
@@ -131,7 +132,7 @@ module module_mux(
 assign salida_mux = swi ? error : siete_seg; // Selección entre los dos inputs según el valor de swi
     
 endmodule
-
+```
 ##### Módulo Corrector de error
 
 ```SystemVerilog
@@ -151,7 +152,7 @@ assign data = (sindrome == 3'b000) ? datos_recibidos : //No hay error
               (sindrome == 3'b111) ? {~datos_recibidos[6],datos_recibidos[5:0]} : //Error en bit 6
               7'bxxxxxxxx;
 endmodule
-
+```
 ##### Módulo Codificador
 
 ```SystemVerilog
@@ -169,7 +170,7 @@ assign datos_cod[1] = datos_in[0]^datos_in[2]^datos_in[3]; // c1 cubre la parida
 assign datos_cod[3] = datos_in[1]^datos_in[2]^datos_in[3]; // c2 cubre la paridad de los bits 2,3,4
 // Se trabaja con la función XOR para calcular los bits de paridad.
 endmodule
-
+```
 ##### Módulo Decodificador
 
 ```SystemVerilog
@@ -184,7 +185,7 @@ assign datos_out[2] = datos_cod[5]; // i2
 assign datos_out[3] = datos_cod[6]; // i3
 
 endmodule
-
+```
 ##### Módulo 7 Segmentos
 
 ```SystemVerilog
@@ -205,7 +206,7 @@ assign display = (data == 4'b0000) ? 7'b111_1110:
                  (data == 4'b1001) ? 7'b111_0011:
                  7'bxxx_xxxx; // Default case, all segments off
 endmodule
-
+```
 ##### Módulo Detector de Error
 
 ```SystemVerilog
@@ -223,7 +224,7 @@ assign sindrome[2] = datos_recibidos[3]^datos_recibidos[4]^datos_recibidos[5]^da
 assign bit_error = sindrome[0] | sindrome[1] | sindrome[2]; 
 // Se trabaja con la funcion OR para encontrar el bit erroneo.
 endmodule
-
+```
 ##### Módulo Error Display
 
 ```SystemVerilog
@@ -236,6 +237,7 @@ module module_errordisp(
                         (bit_error == 1'b0) ? 7'b111_1110 :
                         7'bxxx_xxxx;
 endmodule
+```
 ##### Módulo LED
 
 ```SystemVerilog
@@ -250,6 +252,7 @@ module module_led(
     assign out[2] = ~in[2]; // LED 2
     assign out[3] = ~in[3]; // LED 3
 endmodule
+```
 ## 2. Consumo de recursos
 
 ``` markdown
