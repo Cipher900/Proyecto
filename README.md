@@ -115,7 +115,7 @@ Con este módulo se encontaron los valores:
 ![image](https://github.com/user-attachments/assets/dbb19976-bf16-4b90-8698-a297b0e850fb)
 
 
-#### 1.5 Otros modulos
+### 1.5 Otros modulos
 - agregar informacion siguiendo el ejemplo anterior.
 ##### Módulo Mux
 ```SystemVerilog
