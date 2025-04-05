@@ -1,68 +1,100 @@
-# Nombre del proyecto
-Tarea 1: Introducción al diseño digital en HDL 
+# Detalles del proyecto
+**Tarea 1:** Introducción al diseño digital en HDL 
+**Integrantes del proyecto:** Felipe Sánchez Segura y Gabriel Ovares Morgan
 
-#### Integrantes del proyecto
-Felipe Sánchez Segura y Gabriel Ovares Morgan
+Este proyecto tuvo como objetivo introducir herramientas útiles en el área de la electrónica e ingeniería en general, como lo es el lenguaje de descripción de hardware (HDL) y su implementación física utilizando una FPGA para el diseño de sistemas digitales. 
+## 1. Desarrollo
+En la siguiente sección se presentan los diseños, diagramas y módulos desarrollados a lo largo de la elaboración del sistema propuesto en el proyecto. 
+### 1.0 Descripción general del sistema
+El presente sistema consiste en un circuito orientado a la recuperación de información, implementado mediante el algoritmo de Hamming, utilizando lógica combinacional en SystemVerilog. El sistema opera a partir de dos entradas: una palabra de referencia y una palabra a transmitir.
 
-## 1. Abreviaturas y definiciones
-- **FPGA**: Field Programmable Gate Arrays
+A través del algoritmo de Hamming, el sistema verifica la existencia de errores en la palabra transmitida. En caso de detectarse un error, este es corregido automáticamente, y la palabra corregida es decodificada para su posterior visualización en un display de siete segmentos. De manera simultánea, la palabra de referencia se despliega en los LEDs de la FPGA, permitiendo una comparación visual entre ambas.
 
-## 2. Referencias
-[0] David Harris y Sarah Harris. *Digital Design and Computer Architecture. RISC-V Edition.* Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
+Para su desarrollo, el sistema ha sido estructurado en distintos **subsistemas funcionales**, con el fin de modularizar su diseño y facilitar su implementación. De manera general, se distinguen dos subsistemas principales:
 
-## 3. Desarrollo
+1. **Subsistema de procesamiento**: Responsable de la codificación, verificación, corrección y decodificación de las palabras, utilizando el algoritmo de Hamming.
 
-### 3.0 Descripción general del sistema
+2. **Subsistema de visualización**: Encargado del despliegue de la información procesada en los distintos elementos de salida (display de siete segmentos y LEDs).
 
-### 3.1 Módulo 1
-#### 1. Encabezado del módulo
+A continuación se presenta un diagrama de la conexión de los subsistemas:
+### 1.1 Módulos
+A continuación, se presenta la descripción de los principales módulos que componen el sistema desarrollado.
+##### Módulo Top
+En este módulo se instancian los múltiples módulos que fueron desarrollados para este proyecto. Se conectan de manera que cumpla con lo estipulado en los diagramas anteriores.
+
 ```SystemVerilog
-module mi_modulo(
-    input logic     entrada_i,      
-    output logic    salida_i 
-    );
-```
-#### 2. Parámetros
-- Lista de parámetros
+module module_top (
+input logic [3:0] entrada, // Palabra de referencia
+input logic [6:0] palabra, // Palabra a transmitir
+output logic [6:0] siete_seg,
+output logic [3:0] led_o,
+output logic [6:0] error
+);
 
-#### 3. Entradas y salidas:
+// Definición de las señales internas
+logic [6:0] codificador_out;
+logic [6:0] decodificador_in;
+logic [2:0] sindrome_c;
+logic [2:0] sindrome_d;
+logic bit_error_c;
+logic bit_error_d;
+logic [6:0] palabra_out;
+
+//señales de salida para los led y el display 7 segmentos
+logic [3:0] led_cod;
+logic [3:0] siete_seg_cod;
+
+// Instancia de los módulos
+module_codificador codificador (entrada,codificador_out);
+module_detector_error detector_cod(codificador_out,sindrome_c,bit_error_d);
+module_corrector_error corrector_cod(sindrome_c,codificador_out,palabra_out);
+module_decodificador deco_led(palabra_out,siete_seg_cod);
+module_7segmentos display_cod(siete_seg_cod,siete_seg);
+module_detector_error detector_deco(palabra,sindrome_d,bit_error_c);
+module_corrector_error corrector_deco(sindrome_d,palabra,decodificador_in);
+module_decodificador deco_display(decodificador_in,led_cod);
+module_led leds(led_cod,led_o);
+module_errordisp error_display(bit_error_c,error);
+
+endmodule
+```
+#### 1.2 Entradas y salidas:
 - `entrada_i`: descripción de la entrada
 - `salida_o`: descripción de la salida
-
-#### 4. Criterios de diseño
-Diagramas, texto explicativo...
-
-#### 5. Testbench
+#### 1.4 Testbench
 Descripción y resultados de las pruebas hechas
 
-### Otros modulos
+#### 1.5 Otros modulos
 - agregar informacion siguiendo el ejemplo anterior.
 
 
-## 4. Consumo de recursos
+## 2. Consumo de recursos
+
+``` markdown
 === module_top ===
+   Number of wires:                 78
+   Number of wire bits:            210
+   Number of public wires:          78
+   Number of public wire bits:     210
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 91
+     GND                             1
+     IBUF                           11
+     LUT1                            1
+     LUT4                           35
+     MUX2_LUT5                      14
+     MUX2_LUT6                       7
+     MUX2_LUT7                       3
+     OBUF                           18
+     VCC                             1
+```
+## 3. Problemas encontrados durante el proyecto
 
-   Number of wires:                 64
-   Number of wire bits:            196
-   Number of public wires:          64
-   Number of public wire bits:     196
-   Number of memories:               0
-   Number of memory bits:            0
-   Number of processes:              0
-   Number of cells:                 76
-     GND                             1
-     IBUF                           11
-     LUT1                            1
-     LUT4                           27
-     MUX2_LUT5                      10
-     MUX2_LUT6                       5
-     MUX2_LUT7                       2
-     OBUF                           18
-     VCC                             1
-
-
-## 5. Problemas encontrados durante el proyecto
-
-## Apendices:
-### Apendice 1:
-texto, imágen, etc
+## 4. Abreviaturas y definiciones
+**FPGA:** Field Programmable Gate Arrays
+**HDL:** Hardware Description Language
+**LED:** Light Emitting Diode
+## 5. Referencias
+[0] David Harris y Sarah Harris. *Digital Design and Computer Architecture. RISC-V Edition.* Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
